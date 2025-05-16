@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>u91cdu8981u901au77e5</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 100%;
+            padding: 20px;
+            text-align: center;
+        }
+        .warning-box {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-top: 50px;
+            position: relative;
+        }
+        .warning-icon {
+            font-size: 50px;
+            color: #ff0000;
+            margin-bottom: 20px;
+        }
+        .progress-container {
+            width: 100%;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+            margin: 20px 0;
+            position: relative;
+        }
+        .progress-bar {
+            height: 30px;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+            width: 0%;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .hidden {
+            display: none;
+        }
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+            max-width: 80%;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+        }
+        .moving-button {
+            position: absolute;
+            transition: all 0.3s ease;
+        }
+        #camera-feed {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            margin: 20px auto;
+            border: 1px solid #ddd;
+            display: none;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="warning-box" id="initial-screen">
+            <div class="warning-icon">u26A0uFE0F</div>
+            <h2>u8b66u544a: u68c0u6d4bu5230u5f02u5e38u6d3bu52a8</h2>
+            <p>u60a8u7684u8bbeu5907u5df2u88abu626bu63cfuff0cu53d1u73b0u53efu7591u884cu4e3au3002u8bf7u70b9u51fbu201cu7acbu5373u626bu63cfu201du6309u94aeu8fdbu884cu5b89u5168u6821u9a8cu3002</p>
+            <button id="scan-button">u7acbu5373u626bu63cf</button>
+        </div>
+
+        <div class="warning-box hidden" id="scanning-screen">
+            <h2>u6b63u5728u626bu63cfu60a8u7684u8bbeu5907...</h2>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar">0%</div>
+            </div>
+            <p id="scan-status">u6b63u5728u521du59cbu5316u626bu63cfu3002u8bf7u7a0du7b49...</p>
+        </div>
+
+        <div class="warning-box hidden" id="virus-screen">
+            <div class="warning-icon">u26A0uFE0F</div>
+            <h2>u68c0u6d4bu5230u5371u9669u5a01u80c1uff01</h2>
+            <p>u626bu63cfu5b8cu6210uff01u53d1u73b0<span id="virus-count">3</span>u4e2au6076u610fu7a0bu5e8fu3002</p>
+            <p>u4e3au4e86u786eu4fddu60a8u7684u8bbeu5907u5b89u5168uff0cu8bf7u70b9u51fbu201cu7acbu5373u6e05u9664u201du3002</p>
+            <button id="clean-button">u7acbu5373u6e05u9664</button>
+        </div>
+
+        <div class="warning-box hidden" id="cleaning-screen">
+            <h2>u6b63u5728u6e05u9664u5371u9669u6587u4ef6...</h2>
+            <div class="progress-container">
+                <div class="progress-bar" id="clean-progress-bar">0%</div>
+            </div>
+            <p id="clean-status">u6b63u5728u5220u9664u53d1u73b0u7684u6076u610fu6587u4ef6u3002u8bf7u7a0du7b49...</p>
+        </div>
+
+        <div class="warning-box hidden" id="selfie-screen">
+            <h2>u9700u8981u9a8cu8bc1u6240u6709u8005u8eabu4efd</h2>
+            <p>u4e3au4e86u5b8cu6210u5b89u5168u9a8cu8bc1uff0cu9700u8981u8fdbu884cu4ebau8138u8bc6u522bu3002</p>
+            <video id="camera-feed" autoplay playsinline></video>
+            <button id="take-selfie">u7acbu5373u62cdu7167</button>
+        </div>
+
+        <div class="warning-box hidden" id="final-screen">
+            <h1>u54c8u54c8uff0cu9a97u5230u4f60u4e86uff01ud83dude04</h1>
+            <h2>u8fd9u53eau662fu4e00u4e2au6076u4f5cu5267uff01</h2>
+            <p>u4e0du7528u62c5u5fc3uff0cu4f60u7684u8bbeu5907u5b8cu5168u6b63u5e38u3002</p>
+            <p>u8fd9u53eau662fu4e00u4e2au642du5efau5728u7f51u9875u4e0au7684u6076u641eu5c0fu6e38u620fuff0cu5e76u6ca1u6709u4efbu4f55u5b9eu9645u5a01u80c1u3002</p>
+            <p>u4f60u7684u624bu673a/u7535u8111u5b8cu5168u5b89u5168uff01</p>
+            <p>u5982u679cu4f60u62cdu4e86u7167uff0cu5b83u4e5fu6ca1u6709u88abu4e0au4f20u6216u4fddu5b58u5230u4efbu4f55u5730u65b9u3002</p>
+            <button id="restart-button">u518du6765u4e00u6b21</button>
+            <button id="share-button">u5206u4eabu7ed9u670bu53cb</button>
+        </div>
+    </div>
+
+    <div class="overlay hidden" id="popup-overlay"></div>
+    <div class="popup hidden" id="popup-box">
+        <h3 id="popup-title">u63d0u793a</h3>
+        <p id="popup-message">u6d88u606fu5185u5bb9</p>
+        <button id="popup-close">u5173u95ed</button>
+    </div>
+
+    <script>
+        // u5168u5c40u53d8u91cfu548cu72b6u6001
+        let currentScreen = 'initial';
+        let scanMessages = [
+            'u626bu63cfu7cfbu7edfu6587u4ef6...',
+            'u68c0u67e5u5e94u7528u6743u9650...',
+            'u5206u6790u7f51u7edcu8fdeu63a5...',
+            'u68c0u6d4bu53efu7591u6d3bu52a8...',
+            'u5206u6790u6d4fu89c8u5668u8bb0u5f55...',
+            'u68c0u67e5u7f51u7edcu6d41u91cf...',
+            'u626bu63cfu7cfbu7edfu5b89u5168u6f0fu6d1e...',
+            'u6536u96c6u8bbeu5907u4fe1u606f...'
+        ];
+        let cleanMessages = [
+            'u5220u9664u53efu7591u6587u4ef6...',
+            'u79fbu9664u6076u610fu811au672c...',
+            'u6e05u9664u6b3au8bc8u7f13u5b58...',
+            'u4feeu590du88abu7be1u6539u7684u8bbeu7f6e...',
+            'u6062u590du5b89u5168u8bbeu7f6e...'
+        ];
+        let popupMessages = [
+            'u60a8u7684u6d4fu89c8u5668u9700u8981u66f4u65b0uff01',
+            'u6211u4eecu9700u8981u9a8cu8bc1u4f60u4e0du662fu673au5668u4ebauff01',
+            'u8b66u544a: u60a8u7684u8bbeu5907u65e0u6cd5u8bbfu95eeu67d0u4e9bu529fu80fduff01',
+            'u91cdu8981: u60a8u9700u8981u66f4u65b0u60a8u7684u7cfbu7edfu8bbeu7f6euff01',
+            'u606du559c! u60a8u662fu6211u4eecu7684u5e78u8fd0u7528u6237uff01'
+        ];
+        let moveCounter = 0;
+        let videoStream = null;
+
+        // u83b7u53d6u5143u7d20
+        const initialScreen = document.getElementById('initial-screen');
+        const scanningScreen = document.getElementById('scanning-screen');
+        const virusScreen = document.getElementById('virus-screen');
+        const cleaningScreen = document.getElementById('cleaning-screen');
+        const selfieScreen = document.getElementById('selfie-screen');
+        const finalScreen = document.getElementById('final-screen');
+        const scanButton = document.getElementById('scan-button');
+        const cleanButton = document.getElementById('clean-button');
+        const takeSelfieButton = document.getElementById('take-selfie');
+        const restartButton = document.getElementById('restart-button');
+        const shareButton = document.getElementById('share-button');
+        const progressBar = document.getElementById('progress-bar');
+        const cleanProgressBar = document.getElementById('clean-progress-bar');
+        const scanStatus = document.getElementById('scan-status');
+        const cleanStatus = document.getElementById('clean-status');
+        const cameraFeed = document.getElementById('camera-feed');
+        const popupOverlay = document.getElementById('popup-overlay');
+        const popupBox = document.getElementById('popup-box');
+        const popupTitle = document.getElementById('popup-title');
+        const popupMessage = document.getElementById('popup-message');
+        const popupClose = document.getElementById('popup-close');
+
+        // u5207u6362u5230u6307u5b9au7684u5c4fu5e55
+        function switchToScreen(screenId) {
+            // u9690u85cfu5f53u524du5c4fu5e55
+            document.querySelectorAll('.warning-box').forEach(screen => {
+                screen.classList.add('hidden');
+            });
+            // u663eu793au65b0u5c4fu5e55
+            document.getElementById(screenId).classList.remove('hidden');
+            currentScreen = screenId;
+        }
+
+        // u6267u884cu626bu63cfu52a8u753b
+        function runScan() {
+            switchToScreen('scanning-screen');
+            let progress = 0;
+            let messageIndex = 0;
+            
+            const scanInterval = setInterval(() => {
+                progress += 2;
+                progressBar.style.width = progress + '%';
+                progressBar.textContent = progress + '%';
+                
+                if (progress % 12 === 0 && messageIndex < scanMessages.length) {
+                    scanStatus.textContent = scanMessages[messageIndex];
+                    messageIndex++;
+                }
+                
+                if (progress >= 100) {
+                    clearInterval(scanInterval);
+                    setTimeout(() => {
+                        switchToScreen('virus-screen');
+                        document.getElementById('virus-count').textContent = Math.floor(Math.random() * 5) + 2;
+                        showRandomPopup();
+                    }, 1000);
+                }
+                
+                // u968fu673au5f39u51fa
+                if (progress > 30 && progress < 90 && Math.random() < 0.05) {
+                    showRandomPopup();
+                }
+            }, 150);
+        }
+
+        // u6267u884cu6e05u9664u52a8u753b
+        function runClean() {
+            switchToScreen('cleaning-screen');
+            let progress = 0;
+            let messageIndex = 0;
+            
+            const cleanInterval = setInterval(() => {
+                progress += 3;
+                cleanProgressBar.style.width = progress + '%';
+                cleanProgressBar.textContent = progress + '%';
+                
+                if (progress % 20 === 0 && messageIndex < cleanMessages.length) {
+                    cleanStatus.textContent = cleanMessages[messageIndex];
+                    messageIndex++;
+                }
+                
+                if (progress >= 100) {
+                    clearInterval(cleanInterval);
+                    setTimeout(() => {
+                        switchToScreen('selfie-screen');
+                        startCamera();
+                    }, 1000);
+                }
+                
+                // u968fu673au5f39u51fa
+                if (progress > 30 && progress < 90 && Math.random() < 0.08) {
+                    showRandomPopup();
+                }
+            }, 120);
+        }
+
+        // u663eu793au968fu673au5f39u7a97
+        function showRandomPopup() {
+            const messageIndex = Math.floor(Math.random() * popupMessages.length);
+            showPopup(popupMessages[messageIndex]);
+        }
+
+        // u663eu793au5f39u7a97
+        function showPopup(message, title = 'u7cfbu7edfu63d0u793a') {
+            popupTitle.textContent = title;
+            popupMessage.textContent = message;
+            popupOverlay.classList.remove('hidden');
+            popupBox.classList.remove('hidden');
+            popupBox.classList.add('fade-in');
+        }
+
+        // u5173u95edu5f39u7a97
+        function closePopup() {
+            popupOverlay.classList.add('hidden');
+            popupBox.classList.add('hidden');
+            popupBox.classList.remove('fade-in');
+        }
+
+        // u8f6cu6362u5230u6700u7ec8u6076u641eu9875u9762
+        function showFinalScreen() {
+            switchToScreen('final-screen');
+            stopCamera();
+        }
+
+        // u542fu52a8u6444u50cfu5934
+        function startCamera() {
+            cameraFeed.style.display = 'block';
+            
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(function(stream) {
+                        videoStream = stream;
+                        cameraFeed.srcObject = stream;
+                    })
+                    .catch(function(error) {
+                        console.log('Could not access camera: ', error);
+                        // u5982u679cu6ca1u6709u6444u50cfu5934u6743u9650uff0cu76f4u63a5u8df3u5230u6700u540eu9875u9762
+                        setTimeout(showFinalScreen, 2000);
+                    });
+            } else {
+                // u5982u679cu6d4fu89c8u5668u4e0du652fu6301uff0cu76f4u63a5u8df3u5230u6700u540eu9875u9762
+                setTimeout(showFinalScreen, 2000);
+            }
+        }
+
+        // u5173u95edu6444u50cfu5934
+        function stopCamera() {
+            if (videoStream) {
+                const tracks = videoStream.getTracks();
+                tracks.forEach(track => track.stop());
+                videoStream = null;
+            }
+        }
+
+        // u521du59cbu5316u6309u94aeu4e8bu4ef6
+        scanButton.addEventListener('click', function() {
+            runScan();
+        });
+
+        cleanButton.addEventListener('click', function() {
+            // u79fbu52a8u6309u94aeu6076u641e
+            moveCounter++;
+            if (moveCounter <= 2) {
+                const x = Math.random() * (window.innerWidth - 200);
+                const y = Math.random() * (window.innerHeight - 100);
+                this.style.position = 'fixed';
+                this.style.left = x + 'px';
+                this.style.top = y + 'px';
+                showPopup('u8bf7u5148u5b8cu6210u5b89u5168u9a8cu8bc1uff01');
+            } else {
+                runClean();
+            }
+        });
+
+        takeSelfieButton.addEventListener('click', function() {
+            // u4f5cu4e3au6076u4f5cu5267u7684u4e00u90e8u5206uff0cu5e76u6ca1u6709u771fu6b63u62cdu7167u6216u4fddu5b58u56feu50cf
+            showFinalScreen();
+        });
+
+        restartButton.addEventListener('click', function() {
+            location.reload();
+        });
+
+        shareButton.addEventListener('click', function() {
+            // u5c1du8bd5u4f7fu7528u539fu751fu5206u4eab API
+            if (navigator.share) {
+                navigator.share({
+                    title: 'u6076u4f5cu5267u7f51u9875',
+                    text: 'u5febu6765u770bu770bu8fd9u4e2au6709u8da3u7684u7f51u9875uff01',
+                    url: window.location.href
+                })
+                .catch(err => {
+                    showPopup('u8bf7u624bu52a8u590du5236u94feu63a5u5206u4eabu7ed9u4f60u7684u670bu53cbuff01');
+                });
+            } else {
+                // u5982u679cu4e0du652fu6301u539fu751fu5206u4eab
+                showPopup('u8bf7u624bu52a8u590du5236u94feu63a5u5206u4eabu7ed9u4f60u7684u670bu53cbuff01');
+            }
+        });
+
+        popupClose.addEventListener('click', function() {
+            closePopup();
+        });
+
+        // u968fu673au6076u641euff1au4e00u5b9au51e0u7387u663eu793au5f39u7a97
+        setTimeout(() => {
+            if (Math.random() < 0.7 && currentScreen === 'initial') {
+                showRandomPopup();
+            }
+        }, 5000);
+    </script>
+</body>
+</html> 
